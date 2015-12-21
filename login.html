@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<link href="css/style.css" rel='stylesheet' type='text/css' />
+<!--webfonts-->
+<link href='http://fonts.useso.com/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.useso.com/css?family=Exo+2' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="css/sweet-alert.css">
+<!--//webfonts-->
+<script src="http://libs.useso.com/js/jquery/1.3.2/jquery.min.js"></script>
+<script src="js/sweet-alert.js"></script>
+
+
+</head>
+<body >
+<script>$(document).ready(function(c) {
+
+  $('.close').live('click', function(c){
+    $('.form').fadeOut('slow', function(c){
+        $('.form').remove();
+    });
+  });   
+});
+</script> 
+<!--SIGN UP-->
+
+<h1 id="Title">7Day Auto Sign--Login</h1>
+<div class="form" id="form">
+  <div class="close"> </div>
+  <div class="head-info">
+    <label class="lbl-1"> </label>
+    <label class="lbl-2"> </label>
+    <label class="lbl-3"> </label>
+  </div>
+  <div class="clear"> </div>
+  <div class="avtar"> <img src="images/avtar.png" /> </div>
+  <div class="loginPage" id="login">
+    <input type="text" class="text" value="用户名" id="username" >
+    <div class="key">
+      <input type="password" id="password">
+    </div>
+    <div>
+      <p class="ToReg" id="toreg">立即注册</p>
+    </div>
+    <div class="signin">
+      <input type="submit" value="登陆" id="loginbt">
+    </div>
+  </div>
+  <div id="loadbox"></div>
+  <div class="reg" style="display:none" id="reg">
+
+ 
+    <input type="text" class="text" id="regusername" value="用户名" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '用户名';}" >
+    <div class="key">
+      <input type="password" id="regpassword">
+    </div>
+    <div class="key">
+      <input type="password" id="reregpassword">
+    </div>
+    <div>
+      <p class="ToLogin" id="tologin">立即登陆</p>
+    </div>
+    <div class="signin">
+      <input type="submit" value="注册" id="regbt">
+    </div>
+  </div>
+</div>
+<div class="copy-rights"> </div>
+</body>
+<script>
+//进入登陆界面
+$("#toreg").live('click',function(){
+document.getElementById("login").style.display="none";
+document.getElementById("Title").innerHTML="7Day Auto Sign--Reg";
+document.getElementById("reg").style.display="block";
+});
+//进入注册界面
+$("#tologin").live('click',function(){
+document.getElementById("reg").style.display="none";
+document.getElementById("Title").innerHTML="7Day Auto Sign--Login";
+document.getElementById("login").style.display="block";
+});
+//post登陆
+  $("#loginbt").live('click',function(){  
+    document.getElementById("loginbt").setAttribute ('disabled', 'disabled');
+    var user = $("#username").val();  
+    var pass = $("#password").val();  
+    if(user!=""&pass!=""){
+          $.ajax({
+        type: "POST",  
+        url: "CheckLogin.php?action=login",  
+        dataType: "json",  
+        data: {"user":user,"pass":pass},  
+        success: function(json){  
+            if(json.success==1){  
+window.location.href="/"; 
+            }else{
+              megerr();
+
+            }  
+        }  ,
+        error:function(){
+          megerr();
+          
+        }
+    }); 
+  }else{
+sweetAlert({
+                title: "请输入用户名或密码",
+                 text: "",
+                  type: "error",
+                  showCancelButton: false,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "重试",
+  closeOnConfirm: true,
+},
+function(){
+  document.getElementById("loginbt").removeAttribute ('disabled');
+}
+);
+  }
+ 
+  }); 
+
+function megerr(){
+  sweetAlert({
+                title: "登陆失败",
+                 text: "请重试登陆",
+                  type: "error",
+                  showCancelButton: false,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "重试",
+  closeOnConfirm: true,
+}, function(){$("#username").val("");
+$("#password").val("");
+document.getElementById("loginbt").removeAttribute ('disabled');
+});
+}
+  //post注册
+  $("#regbt").live('click',function(){  
+    showOverlay();
+    document.getElementById("regbt").setAttribute ('disabled','disabled');
+    var reguser = $("#regusername").val();  
+    var regpass = $("#regpassword").val();
+    var repass=$("#reregpassword").val();  
+    if(reguser!=""&regpass!=""&regpass==repass){
+      
+          $.ajax({
+        type: "POST",  
+        url: "CheckLogin.php?action=reg",  
+        dataType: "json",  
+        data: {"reguser":reguser,"regpass":regpass},  
+        success: function(json){  
+            if(json.success==1){  
+              hideOverlay();
+            sweetAlert({
+                    title: "注册成功",
+                 text: "请点击确定跳转到登陆界面",
+                  type: "success",
+                  showCancelButton: false,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "确定",
+  closeOnConfirm: true,
+}, function(){
+  document.getElementById("regbt").removeAttribute ('disabled');
+document.getElementById("reg").style.display="none";
+document.getElementById("Title").innerHTML="7Day Auto Sign--Login";
+document.getElementById("login").style.display="block";
+});
+            }else{  
+              hideOverlay();
+                  sweetAlert({
+                title: "注册失败",
+                 text: "可能您的信息已经被注册过了",
+                  type: "error",
+                  showCancelButton: false,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "重试",
+  closeOnConfirm: true,
+},
+function(){
+    document.getElementById("regbt").removeAttribute ('disabled');
+}
+);
+            }  
+        }  ,
+        error:function(){
+hideOverlay();
+          sweetAlert({
+                title: "注册失败",
+                 text: "连接服务器失败，请重试",
+                  type: "error",
+                  showCancelButton: false,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "重试",
+  closeOnConfirm: true,
+},
+function(){
+    document.getElementById("regbt").removeAttribute ('disabled');
+});
+
+        }
+    });
+        }else{
+          sweetAlert({
+                title: "请输入完整的信息",
+                 text: "不要保留任何空白信息",
+                  type: "error",
+                  showCancelButton: false,
+  confirmButtonColor: "#DD6B55",
+  confirmButtonText: "重试",
+  closeOnConfirm: true,
+},
+function(){
+    document.getElementById("regbt").removeAttribute ('disabled');
+});
+        }
+  
+  }); 
+</script>
+<script src="js/index.js"></script>
+</html>
